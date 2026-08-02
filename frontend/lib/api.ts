@@ -1,22 +1,24 @@
 /**
  * DriftLens Control Center - API Client
  *
- * Automatically detects the backend URL based on where
- * the frontend is being accessed from.
- *
- * - If accessed via localhost → uses localhost:8000
- * - If accessed via IP/domain → uses same IP/domain:8000
+ * Automatically detects backend URL at RUNTIME in the browser.
+ * Works on any machine without configuration:
+ * - localhost → http://localhost:8000
+ * - 192.168.x.x → http://192.168.x.x:8000
+ * - any-domain.com → http://any-domain.com:8000
  */
 
 function getApiBase(): string {
+  // Server-side rendering fallback
   if (typeof window === "undefined") {
-    return "http://localhost:8000";
+    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   }
+  // Runtime: use same hostname as browser, port 8000
   const { protocol, hostname } = window.location;
   return `${protocol}//${hostname}:8000`;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || getApiBase();
+const API_BASE = getApiBase();
 
 export interface DriftMetrics {
   similarity_score: number;
