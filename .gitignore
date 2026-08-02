@@ -41,3 +41,11 @@ backend/data/*.json
 
 # OS
 Thumbs.db
+
+# Environment files (never commit these)
+.env.local
+.env.*.local
+frontend/.env.local
+frontend/.env.*.local
+backend/.env
+backend/.env.local
