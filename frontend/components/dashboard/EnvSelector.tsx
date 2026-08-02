@@ -14,6 +14,14 @@ interface Props {
 }
 
 export function EnvSelector({ environments, envA, envB, loading, onEnvAChange, onEnvBChange, onAnalyze }: Props) {
+  const handleEnvAChange = (value: string | null) => {
+    if (value) onEnvAChange(value);
+  };
+
+  const handleEnvBChange = (value: string | null) => {
+    if (value) onEnvBChange(value);
+  };
+
   return (
     <Card className="mb-8 border-slate-800 bg-slate-900/50 backdrop-blur">
       <CardHeader>
@@ -29,7 +37,7 @@ export function EnvSelector({ environments, envA, envB, loading, onEnvAChange, o
         <div className="flex flex-wrap items-end gap-4">
           <div className="flex-1 min-w-[200px]">
             <label className="mb-2 block text-sm font-medium text-slate-300">Environment A</label>
-            <Select value={envA} onValueChange={onEnvAChange}>
+            <Select value={envA} onValueChange={handleEnvAChange}>
               <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
                 <SelectValue placeholder="Select environment" />
               </SelectTrigger>
@@ -43,7 +51,7 @@ export function EnvSelector({ environments, envA, envB, loading, onEnvAChange, o
           <div className="flex-shrink-0 pb-2 text-2xl text-slate-500">vs</div>
           <div className="flex-1 min-w-[200px]">
             <label className="mb-2 block text-sm font-medium text-slate-300">Environment B</label>
-            <Select value={envB} onValueChange={onEnvBChange}>
+            <Select value={envB} onValueChange={handleEnvBChange}>
               <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
                 <SelectValue placeholder="Select environment" />
               </SelectTrigger>

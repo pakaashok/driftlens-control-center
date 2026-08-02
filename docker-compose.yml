@@ -1,0 +1,56 @@
+# ─────────────────────────────────────────────────────────────
+# DriftLens Control Center - Docker Compose
+#
+# Usage:
+#   Start:    docker-compose up
+#   Stop:     docker-compose down
+#   Rebuild:  docker-compose up --build
+#   Logs:     docker-compose logs -f
+# ─────────────────────────────────────────────────────────────
+
+services:
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: driftlens-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./samples:/app/samples:ro
+    environment:
+      - ALLOWED_ORIGINS=*
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - driftlens-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8000
+    container_name: driftlens-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NODE_ENV=production
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - driftlens-network
+
+networks:
+  driftlens-network:
+    driver: bridge
