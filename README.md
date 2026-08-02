@@ -182,7 +182,7 @@ driftlens-control-center/
         │   └── deployment.yaml    # replicas: 3, nginx:1.21
         └── prod/
             └── deployment.yaml    # replicas: 10, nginx:1.25
-            
+
 🔌 API Reference
 List Environments
 bash
@@ -308,13 +308,8 @@ Tailwind CSS	Styling
 TypeScript	Type safety
 Docker	Containerization
 Jaccard Similarity	Drift algorithm
-<div align="center">
-⭐ Star this repo if you find it useful!
 
-Built with ❤️ for the DevOps community
 
-</div> EOF ```
 ✅ Verify README
 bash
 wc -l ~/driftlens-control-center/README.md
-# Should show 300+ lines
