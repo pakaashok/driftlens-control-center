@@ -68,6 +68,7 @@ Open browser: http://localhost:3000 🎉
 Stop
 bash
 docker-compose down
+
 🖥️ Screenshots
 
 Dashboard — Ready State
@@ -248,6 +249,7 @@ bash
 cd backend
 source venv/bin/activate
 pytest tests/ -v
+
 # 34 tests passing ✅
 🧪 Tests
 python
@@ -262,6 +264,7 @@ bash
 cd backend
 source venv/bin/activate
 pytest tests/ -v
+
 🐳 Docker Commands
 bash
 # Start everything
@@ -278,6 +281,7 @@ docker-compose up -d --build
 
 # Check status
 docker-compose ps
+
 🗺️ Roadmap
  Phase 1: Core engine + REST API + Dashboard
  Phase 2: Docker deployment
@@ -287,14 +291,13 @@ docker-compose ps
  Slack/email alerts
  Historical drift tracking
  Multi-cluster support
+
 🤝 Contributing
 Fork the repository
 Create your feature branch (git checkout -b feature/amazing-feature)
 Commit your changes (git commit -m 'Add amazing feature')
 Push to the branch (git push origin feature/amazing-feature)
 Open a Pull Request
-📄 License
-MIT License — feel free to use, modify, and share!
 
 👨‍💻 Built With
 Technology	Purpose
