@@ -3,30 +3,31 @@ kind: Service
 metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"driftlens","environment":"staging"},"name":"driftlens-backend","namespace":"staging"},"spec":{"ports":[{"name":"backend","port":8000,"targetPort":8000}],"selector":{"app":"driftlens","environment":"staging"},"type":"ClusterIP"}}
-  creationTimestamp: "2026-08-09T18:00:29Z"
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"sample-app","environment":"staging","managed-by":"driftlens"},"name":"sample-app","namespace":"staging"},"spec":{"ports":[{"name":"http","port":80,"targetPort":80}],"selector":{"app":"sample-app","environment":"staging"},"type":"ClusterIP"}}
+  creationTimestamp: "2026-08-09T18:37:18Z"
   labels:
-    app: driftlens
+    app: sample-app
     environment: staging
-  name: driftlens-backend
+    managed-by: driftlens
+  name: sample-app
   namespace: staging
-  resourceVersion: "2336"
-  uid: 2d2ccd9b-1c17-4b9e-ac18-486c24397a9f
+  resourceVersion: "4394"
+  uid: 54c5c001-deff-4837-b4e8-bdb2f7f8f44e
 spec:
-  clusterIP: 10.109.55.214
+  clusterIP: 10.99.218.164
   clusterIPs:
-  - 10.109.55.214
+  - 10.99.218.164
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
   ipFamilyPolicy: SingleStack
   ports:
-  - name: backend
-    port: 8000
+  - name: http
+    port: 80
     protocol: TCP
-    targetPort: 8000
+    targetPort: 80
   selector:
-    app: driftlens
+    app: sample-app
     environment: staging
   sessionAffinity: None
   type: ClusterIP

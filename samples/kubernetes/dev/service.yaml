@@ -3,30 +3,31 @@ kind: Service
 metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"driftlens","environment":"dev"},"name":"driftlens-backend","namespace":"development"},"spec":{"ports":[{"name":"backend","port":8000,"targetPort":8000}],"selector":{"app":"driftlens","environment":"dev"},"type":"ClusterIP"}}
-  creationTimestamp: "2026-08-09T18:00:03Z"
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"sample-app","environment":"dev","managed-by":"driftlens"},"name":"sample-app","namespace":"development"},"spec":{"ports":[{"name":"http","port":80,"targetPort":80}],"selector":{"app":"sample-app","environment":"dev"},"type":"ClusterIP"}}
+  creationTimestamp: "2026-08-09T18:37:13Z"
   labels:
-    app: driftlens
+    app: sample-app
     environment: dev
-  name: driftlens-backend
+    managed-by: driftlens
+  name: sample-app
   namespace: development
-  resourceVersion: "2281"
-  uid: 9217de3a-6003-4592-b89f-ac4de27202f5
+  resourceVersion: "4368"
+  uid: 0bd459e9-bdbd-4c28-88ac-c8794f940070
 spec:
-  clusterIP: 10.111.128.173
+  clusterIP: 10.104.57.121
   clusterIPs:
-  - 10.111.128.173
+  - 10.104.57.121
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
   ipFamilyPolicy: SingleStack
   ports:
-  - name: backend
-    port: 8000
+  - name: http
+    port: 80
     protocol: TCP
-    targetPort: 8000
+    targetPort: 80
   selector:
-    app: driftlens
+    app: sample-app
     environment: dev
   sessionAffinity: None
   type: ClusterIP

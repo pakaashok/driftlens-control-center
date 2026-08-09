@@ -3,31 +3,34 @@ kind: Service
 metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"driftlens","environment":"prod"},"name":"driftlens-backend","namespace":"production"},"spec":{"ports":[{"name":"backend","port":8000,"targetPort":8000}],"selector":{"app":"driftlens","environment":"prod"},"type":"ClusterIP"}}
-  creationTimestamp: "2026-08-09T18:00:37Z"
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"sample-app","environment":"prod","managed-by":"driftlens","tier":"critical"},"name":"sample-app","namespace":"production"},"spec":{"ports":[{"name":"http","port":80,"targetPort":80}],"selector":{"app":"sample-app","environment":"prod","tier":"critical"},"type":"ClusterIP"}}
+  creationTimestamp: "2026-08-09T18:37:23Z"
   labels:
-    app: driftlens
+    app: sample-app
     environment: prod
-  name: driftlens-backend
+    managed-by: driftlens
+    tier: critical
+  name: sample-app
   namespace: production
-  resourceVersion: "2396"
-  uid: 3a95e8ea-270d-44b7-ba2c-8f543be1af62
+  resourceVersion: "4429"
+  uid: 69506afd-6770-457c-b905-a626e8285608
 spec:
-  clusterIP: 10.111.238.170
+  clusterIP: 10.100.130.70
   clusterIPs:
-  - 10.111.238.170
+  - 10.100.130.70
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
   ipFamilyPolicy: SingleStack
   ports:
-  - name: backend
-    port: 8000
+  - name: http
+    port: 80
     protocol: TCP
-    targetPort: 8000
+    targetPort: 80
   selector:
-    app: driftlens
+    app: sample-app
     environment: prod
+    tier: critical
   sessionAffinity: None
   type: ClusterIP
 status:

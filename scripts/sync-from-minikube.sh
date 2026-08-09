@@ -1,14 +1,13 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────
-# DriftLens - Sync Live K8s Configs from Minikube
-# Usage: ./scripts/sync-from-minikube.sh
+# DriftLens - Sync LIVE K8s Configs from Minikube
 # ─────────────────────────────────────────────────────
 
 set -e
 
-SAMPLES_DIR="./samples/kubernetes"
+SAMPLES_DIR="$(dirname "$0")/../samples/kubernetes"
 
-echo "🔄 Syncing live configs from Minikube..."
+echo "🔄 Syncing LIVE configs from Minikube..."
 echo ""
 
 declare -A ENV_MAP=(
@@ -21,28 +20,38 @@ for ENV_NAME in "${!ENV_MAP[@]}"; do
   NAMESPACE="${ENV_MAP[$ENV_NAME]}"
   ENV_DIR="$SAMPLES_DIR/$ENV_NAME"
 
-  echo "📦 Pulling namespace: $NAMESPACE → $ENV_NAME"
+  echo "📦 Namespace: $NAMESPACE → $ENV_NAME"
   mkdir -p "$ENV_DIR"
 
-  # Pull deployment
-  kubectl get deployment driftlens \
+  # Pull sample-app deployment (NOT driftlens!)
+  kubectl get deployment sample-app \
     -n "$NAMESPACE" \
     -o yaml > "$ENV_DIR/deployment.yaml" 2>/dev/null \
-    && echo "  ✅ deployment.yaml" \
-    || echo "  ⚠️  No deployment found"
+    && echo "  ✅ deployment.yaml synced" \
+    || echo "  ⚠️  No sample-app deployment in $NAMESPACE"
+
+  # Pull configmap
+  kubectl get configmap sample-app-config \
+    -n "$NAMESPACE" \
+    -o yaml > "$ENV_DIR/configmap.yaml" 2>/dev/null \
+    && echo "  ✅ configmap.yaml synced" \
+    || echo "  ⚠️  No configmap in $NAMESPACE"
 
   # Pull service
-  kubectl get service driftlens-backend \
+  kubectl get service sample-app \
     -n "$NAMESPACE" \
     -o yaml > "$ENV_DIR/service.yaml" 2>/dev/null \
-    && echo "  ✅ service.yaml" \
-    || echo "  ⚠️  No service found"
+    && echo "  ✅ service.yaml synced" \
+    || echo "  ⚠️  No service in $NAMESPACE"
 
+  echo ""
 done
 
+echo "✅ Sync complete!"
 echo ""
-echo "✅ Sync complete! Files updated:"
-find $SAMPLES_DIR -name "*.yaml" | sort
+echo "📊 Replica counts:"
+echo "  dev:     $(kubectl get deployment sample-app -n development -o jsonpath='{.spec.replicas}' 2>/dev/null || echo 'N/A')"
+echo "  staging: $(kubectl get deployment sample-app -n staging -o jsonpath='{.spec.replicas}' 2>/dev/null || echo 'N/A')"
+echo "  prod:    $(kubectl get deployment sample-app -n production -o jsonpath='{.spec.replicas}' 2>/dev/null || echo 'N/A')"
 echo ""
-echo "🎯 Open DriftLens dashboard to see real drift!"
-echo "   http://192.168.29.55:3000"
+echo "🎯 Open DriftLens: http://192.168.29.55:3000"

@@ -4,24 +4,27 @@ metadata:
   annotations:
     deployment.kubernetes.io/revision: "1"
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"driftlens","environment":"prod"},"name":"driftlens","namespace":"production"},"spec":{"replicas":3,"selector":{"matchLabels":{"app":"driftlens","environment":"prod"}},"template":{"metadata":{"labels":{"app":"driftlens","environment":"prod"}},"spec":{"containers":[{"env":[{"name":"ALLOWED_ORIGINS","value":"*"},{"name":"LOG_LEVEL","value":"warn"},{"name":"ENV_NAME","value":"production"},{"name":"CACHE_TTL","value":"3600"},{"name":"CACHE_ENABLED","value":"true"}],"image":"driftlens-control-center-backend:latest","imagePullPolicy":"Never","livenessProbe":{"httpGet":{"path":"/api/health","port":8000},"initialDelaySeconds":10,"periodSeconds":30},"name":"backend","ports":[{"containerPort":8000}],"resources":{"limits":{"cpu":"1000m","memory":"1Gi"},"requests":{"cpu":"500m","memory":"512Mi"}}},{"env":[{"name":"NODE_ENV","value":"production"},{"name":"HOSTNAME","value":"0.0.0.0"}],"image":"driftlens-control-center-frontend:latest","imagePullPolicy":"Never","name":"frontend","ports":[{"containerPort":3000}],"resources":{"limits":{"cpu":"500m","memory":"512Mi"},"requests":{"cpu":"100m","memory":"128Mi"}}}]}}}}
-  creationTimestamp: "2026-08-09T18:00:38Z"
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"sample-app","environment":"prod","managed-by":"driftlens","tier":"critical"},"name":"sample-app","namespace":"production"},"spec":{"replicas":5,"selector":{"matchLabels":{"app":"sample-app","environment":"prod","tier":"critical"}},"template":{"metadata":{"labels":{"app":"sample-app","environment":"prod","tier":"critical"}},"spec":{"containers":[{"envFrom":[{"configMapRef":{"name":"sample-app-config"}}],"image":"nginx:1.20","livenessProbe":{"httpGet":{"path":"/","port":80},"initialDelaySeconds":10,"periodSeconds":30},"name":"app","ports":[{"containerPort":80}],"readinessProbe":{"httpGet":{"path":"/","port":80},"initialDelaySeconds":5,"periodSeconds":10},"resources":{"limits":{"cpu":"100m","memory":"128Mi"},"requests":{"cpu":"50m","memory":"64Mi"}}}]}}}}
+  creationTimestamp: "2026-08-09T18:37:23Z"
   generation: 1
   labels:
-    app: driftlens
+    app: sample-app
     environment: prod
-  name: driftlens
+    managed-by: driftlens
+    tier: critical
+  name: sample-app
   namespace: production
-  resourceVersion: "2472"
-  uid: 6c65278f-92d5-4535-93b0-e5c02287f253
+  resourceVersion: "4550"
+  uid: 39cbdac7-4173-48a8-bee2-718a415eabe0
 spec:
   progressDeadlineSeconds: 600
-  replicas: 3
+  replicas: 5
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: driftlens
+      app: sample-app
       environment: prod
+      tier: critical
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -30,64 +33,47 @@ spec:
   template:
     metadata:
       labels:
-        app: driftlens
+        app: sample-app
         environment: prod
+        tier: critical
     spec:
       containers:
-      - env:
-        - name: ALLOWED_ORIGINS
-          value: '*'
-        - name: LOG_LEVEL
-          value: warn
-        - name: ENV_NAME
-          value: production
-        - name: CACHE_TTL
-          value: "3600"
-        - name: CACHE_ENABLED
-          value: "true"
-        image: driftlens-control-center-backend:latest
-        imagePullPolicy: Never
+      - envFrom:
+        - configMapRef:
+            name: sample-app-config
+        image: nginx:1.20
+        imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
           httpGet:
-            path: /api/health
-            port: 8000
+            path: /
+            port: 80
             scheme: HTTP
           initialDelaySeconds: 10
           periodSeconds: 30
           successThreshold: 1
           timeoutSeconds: 1
-        name: backend
+        name: app
         ports:
-        - containerPort: 8000
+        - containerPort: 80
           protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
         resources:
           limits:
-            cpu: "1"
-            memory: 1Gi
-          requests:
-            cpu: 500m
-            memory: 512Mi
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-      - env:
-        - name: NODE_ENV
-          value: production
-        - name: HOSTNAME
-          value: 0.0.0.0
-        image: driftlens-control-center-frontend:latest
-        imagePullPolicy: Never
-        name: frontend
-        ports:
-        - containerPort: 3000
-          protocol: TCP
-        resources:
-          limits:
-            cpu: 500m
-            memory: 512Mi
-          requests:
             cpu: 100m
             memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
@@ -96,22 +82,22 @@ spec:
       securityContext: {}
       terminationGracePeriodSeconds: 30
 status:
-  availableReplicas: 3
+  availableReplicas: 5
   conditions:
-  - lastTransitionTime: "2026-08-09T18:00:48Z"
-    lastUpdateTime: "2026-08-09T18:00:48Z"
+  - lastTransitionTime: "2026-08-09T18:37:35Z"
+    lastUpdateTime: "2026-08-09T18:37:35Z"
     message: Deployment has minimum availability.
     reason: MinimumReplicasAvailable
     status: "True"
     type: Available
-  - lastTransitionTime: "2026-08-09T18:00:38Z"
-    lastUpdateTime: "2026-08-09T18:00:48Z"
-    message: ReplicaSet "driftlens-75599795b7" has successfully progressed.
+  - lastTransitionTime: "2026-08-09T18:37:23Z"
+    lastUpdateTime: "2026-08-09T18:37:35Z"
+    message: ReplicaSet "sample-app-6c97c4444b" has successfully progressed.
     reason: NewReplicaSetAvailable
     status: "True"
     type: Progressing
   observedGeneration: 1
-  readyReplicas: 3
-  replicas: 3
+  readyReplicas: 5
+  replicas: 5
   terminatingReplicas: 0
-  updatedReplicas: 3
+  updatedReplicas: 5
