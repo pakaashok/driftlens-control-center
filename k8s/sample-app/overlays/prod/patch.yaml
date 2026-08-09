@@ -3,12 +3,12 @@ kind: Deployment
 metadata:
   name: sample-app
 spec:
-  replicas: 5
+  replicas: 7
   template:
     spec:
       containers:
         - name: app
-          image: nginx:1.20
+          image: nginx:1.25
           resources:
             requests:
               cpu: "50m"

@@ -48,3 +48,15 @@ load-images:
 	minikube image load driftlens-control-center-frontend:latest
 	@echo "✅ Images loaded!"
 	
+# ── Auto Sync ─────────────────────────────────────────────────
+watch:
+	@echo "👀 Starting K8s watcher..."
+	@python3 scripts/k8s-watcher.py
+
+watch-simple:
+	@echo "👀 Starting simple watch (30s interval)..."
+	@./scripts/watch-and-sync.sh 30
+
+watch-fast:
+	@echo "👀 Starting fast watch (10s interval)..."
+	@./scripts/watch-and-sync.sh 10
