@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: staging
+
+resources:
+  - ../../base
+
+patches:
+  - path: patch.yaml
+    target:
+      kind: Deployment
+      name: sample-app
+
+configMapGenerator:
+  - name: sample-app-config
+    behavior: merge
+    literals:
+      - APP_ENV=staging
+      - LOG_LEVEL=info
+      - CACHE_ENABLED=true
+      - MAX_CONNECTIONS=50
+      - TIMEOUT=60
+      - VERSION=1.1.0
+      - DB_HOST=staging-db.internal
+      - CACHE_TTL=300
+
+commonLabels:
+  environment: staging
