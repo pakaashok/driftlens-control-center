@@ -27,3 +27,42 @@ test:
 
 restart: kill-all
 	@echo "Ports cleared. Start backend and frontend manually."
+
+# ── Kubernetes / Minikube ─────────────────────────────────────
+k8s-deploy-dev:
+	kubectl apply -k k8s/overlays/dev/
+	@echo "✅ Deployed to development namespace"
+
+k8s-deploy-staging:
+	kubectl apply -k k8s/overlays/staging/
+	@echo "✅ Deployed to staging namespace"
+
+k8s-deploy-prod:
+	kubectl apply -k k8s/overlays/prod/
+	@echo "✅ Deployed to production namespace"
+
+k8s-deploy-all: k8s-deploy-dev k8s-deploy-staging k8s-deploy-prod
+	@echo "✅ Deployed to ALL namespaces!"
+
+k8s-status:
+	@echo "=== Development ==="
+	@kubectl get pods -n development
+	@echo "=== Staging ==="
+	@kubectl get pods -n staging
+	@echo "=== Production ==="
+	@kubectl get pods -n production
+
+sync-minikube:
+	@echo "🔄 Syncing from Minikube..."
+	@./scripts/sync-from-minikube.sh
+
+load-images:
+	@echo "📦 Loading images into Minikube..."
+	minikube image load driftlens-control-center-backend:latest
+	minikube image load driftlens-control-center-frontend:latest
+	@echo "✅ Images loaded!"
+
+drift-check:
+	@echo "🔄 Syncing from Minikube..."
+	@./scripts/sync-from-minikube.sh
+	@echo "🎯 Check dashboard: http://192.168.29.55:3000"
