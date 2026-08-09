@@ -14,27 +14,6 @@
 
 ---
 
-## 📖 Table of Contents
-
-- [What is DriftLens?](#-what-is-driftlens-control-center)
-- [Architecture](#️-architecture)
-- [Features](#-features)
-- [Quick Start](#-quick-start)
-- [Project Structure](#-project-structure)
-- [Project Journey](#️-project-journey)
-- [Docker Commands](#-docker-commands)
-- [Kubernetes Commands](#️-kubernetes-commands)
-- [GitOps Workflow](#-gitops-workflow)
-- [API Reference](#-api-reference)
-- [Local Development](#️-local-development)
-- [Intentional Drift](#-intentional-drift-between-environments)
-- [Tests](#-tests)
-- [Roadmap](#️-roadmap)
-- [Contributing](#-contributing)
-- [Built With](#-built-with)
-
----
-
 ## 📖 What is DriftLens Control Center?
 
 **DriftLens Control Center** is an open-source infrastructure drift detection tool built for DevOps and Platform Engineering teams.
@@ -43,11 +22,22 @@ It detects **configuration drift** across environments (dev, staging, production
 
 ### 🔬 How Jaccard Similarity Works
 
-Jaccard Similarity = |Intersection| / |Union|Real Example:
-Dev tokens:  {replicas=1, image=nginx:1.20, LOG_LEVEL=debug}
-Prod tokens: {replicas=3, image=nginx:1.25, LOG_LEVEL=warn, CACHE=true}Intersection = {} = 0 common tokens
+```text
+Jaccard Similarity = |Intersection| / |Union|
+
+Real Example:
+
+Dev tokens:
+{replicas=1, image=nginx:1.20, LOG_LEVEL=debug}
+
+Prod tokens:
+{replicas=3, image=nginx:1.25, LOG_LEVEL=warn, CACHE=true}
+
+Intersection = {} = 0 common tokens
 Union        = 7 total tokens
 Similarity   = 0/7 = 0% → 100% DRIFT! 🚨
+```
+
 ---
 
 ## 🏗️ Architecture
@@ -55,58 +45,94 @@ Similarity   = 0/7 = 0% → 100% DRIFT! 🚨
 ```text
 ┌─────────────────────────────────────────────────────────────┐
 │                         Browser                             │
-│                  http://localhost:3000                      │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
+│                    http://localhost:3000                    │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│          Frontend Container (Next.js + shadcn/ui)           │
-│  ├── Dark themed dashboard                                  │
-│  ├── Environment selector                                   │
-│  ├── KPI Cards (Similarity, Drift, Tokens)                  │
-│  └── Token diff panels                                      │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ REST API
-                           ▼
+│            Frontend Container (Next.js + shadcn/ui)         │
+│  ├── Dark themed dashboard                                 │
+│  ├── Environment selector                                  │
+│  ├── KPI Cards (Similarity, Drift, Tokens)                 │
+│  └── Token diff panels                                     │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ REST API
+                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                Backend Container (FastAPI)                  │
-│  ├── GET /api/environments                                  │
-│  ├── GET /api/kubernetes/compare                            │
-│  ├── GET /api/kubernetes/matrix                             │
-│  └── GET /api/health                                        │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
+│                 Backend Container (FastAPI)                 │
+│  ├── GET /api/environments                                 │
+│  ├── GET /api/kubernetes/compare                           │
+│  ├── GET /api/kubernetes/matrix                            │
+│  └── GET /api/health                                       │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                  Core Engine (Python)                       │
-│  ├── Jaccard Similarity Algorithm                           │
-│  ├── YAML/JSON/ENV Tokenizer                                │
-│  └── Kubernetes Drift Detector                              │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ reads
-                           ▼
+│                     Core Engine (Python)                    │
+│  ├── Jaccard Similarity Algorithm                          │
+│  ├── YAML/JSON/ENV Tokenizer                               │
+│  └── Kubernetes Drift Detector                             │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ reads
+                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                  Live Data (Minikube)                       │
-│  ├── namespace: development  (replicas: 1)                  │
-│  ├── namespace: staging      (replicas: 2)                  │
-│  └── namespace: production   (replicas: 3)                  │
+│                     Live Data (Minikube)                    │
+│  ├── namespace: development  (replicas: 1)                 │
+│  ├── namespace: staging      (replicas: 2)                 │
+│  └── namespace: production   (replicas: 3)                 │
+└──────────────────────────────▲──────────────────────────────┘
+                               │ kubectl apply
+┌─────────────────────────────────────────────────────────────┐
+│                 GitOps (GitHub Actions)                     │
+│  ├── Push to main branch                                   │
+│  ├── Self-hosted runner on istio-lab                       │
+│  ├── kubectl apply -k k8s/sample-app/overlays/             │
+│  └── Auto-sync DriftLens samples                          │
 └─────────────────────────────────────────────────────────────┘
-                           ▲
-                           │ kubectl apply
-┌─────────────────────────────────────────────────────────────┐
-│                GitOps (GitHub Actions)                      │
-│  ├── Push to main branch                                    │
-│  ├── Self-hosted runner on istio-lab                        │
-│  ├── kubectl apply -k k8s/sample-app/overlays/              │
-│  └── Auto-sync DriftLens samples                            │
-└─────────────────────────────────────────────────────────────┘
-✨ FeaturesFeatureDescription🔍 Drift DetectionCompare K8s manifests across environments📊 Jaccard ScoringMathematical similarity percentage🎨 Beautiful UIDark-themed Next.js dashboard🌡️ Drift ClassificationNO DRIFT / MINOR / MODERATE / CRITICAL📋 Token AnalysisSee exactly what tokens changed🐳 Docker ReadyOne command deployment☸️  Kubernetes NativeKustomize overlays per environment🤖 GitOpsAuto-deploy via GitHub Actions👀 Auto-SyncPython watcher detects K8s changes🔌 REST APIFastAPI with Swagger UI🧪 Well Tested34 tests passing🚀 Quick StartPrerequisites
-Docker + Docker Compose
-One Command!git clone https://github.com/pakaashok/driftlens-control-center.git
+```
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| 🔍 **Drift Detection** | Compare K8s manifests across environments |
+| 📊 **Jaccard Scoring** | Mathematical similarity percentage |
+| 🎨 **Beautiful UI** | Dark-themed Next.js dashboard |
+| 🌡️ **Drift Classification** | NO DRIFT / MINOR / MODERATE / CRITICAL |
+| 📋 **Token Analysis** | See exactly what tokens changed |
+| 🐳 **Docker Ready** | One command deployment |
+| ☸️ **Kubernetes Native** | Kustomize overlays per environment |
+| 🤖 **GitOps** | Auto-deploy via GitHub Actions |
+| 👀 **Auto-Sync** | Python watcher detects K8s changes |
+| 🔌 **REST API** | FastAPI with Swagger UI |
+| 🧪 **Well Tested** | 34 tests passing |
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Docker + Docker Compose
+
+### One Command!
+
+```bash
+git clone https://github.com/pakaashok/driftlens-control-center.git
 cd driftlens-control-center
 docker-compose up -d
-Open: http://localhost:3000 🎉📁 Project Structuredriftlens-control-center/
-│
+```
+
+Open: [**http://localhost:3000**](http://localhost:3000/) 🎉
+
+---
+
+## 📁 Project Structure
+
+```text
+driftlens-control-center/
 ├── 🐳 docker-compose.yml              # One command deployment
 ├── 📋 Makefile                        # All useful commands
 ├── 📝 README.md                       # This file
@@ -116,72 +142,83 @@ Open: http://localhost:3000 🎉📁 Project Structuredriftlens-control-center/
 │   ├── requirements.txt
 │   └── app/
 │       ├── core/
-│       │   ├── jaccard.py             # Jaccard algorithm
-│       │   └── tokenizer.py           # YAML/JSON/ENV tokenizer
+│       │   ├── jaccard.py              # Jaccard algorithm
+│       │   └── tokenizer.py            # YAML/JSON/ENV tokenizer
 │       ├── modules/
-│       │   └── kubernetes.py          # K8s drift detector
+│       │   └── kubernetes.py           # K8s drift detector
 │       ├── api/
-│       │   └── routes.py              # REST endpoints
+│       │   └── routes.py               # REST endpoints
 │       ├── models/
-│       │   └── schemas.py             # Pydantic models
-│       └── main.py                    # FastAPI app + CORS
+│       │   └── schemas.py              # Pydantic models
+│       └── main.py                     # FastAPI app + CORS
 │
-├── frontend/                          # Next.js Dashboard
-│   ├── Dockerfile                     # Node 20-alpine multi-stage
+├── frontend/                           # Next.js Dashboard
+│   ├── Dockerfile                      # Node 20-alpine multi-stage
 │   ├── app/
-│   │   └── page.tsx                   # Main dashboard page
+│   │   └── page.tsx                    # Main dashboard page
 │   ├── components/
 │   │   └── dashboard/
-│   │       ├── Header.tsx             # App header
-│   │       ├── EnvSelector.tsx        # Environment picker
-│   │       ├── KPICards.tsx           # Metric cards
-│   │       ├── TokenPanel.tsx         # Token diff panels
-│   │       └── EmptyState.tsx         # Ready state
+│   │       ├── Header.tsx              # App header
+│   │       ├── EnvSelector.tsx         # Environment picker
+│   │       ├── KPICards.tsx            # Metric cards
+│   │       ├── TokenPanel.tsx           # Token diff panels
+│   │       └── EmptyState.tsx          # Ready state
 │   └── lib/
-│       └── api.ts                     # API client
+│       └── api.ts                      # API client
 │
-├── k8s/                               # Kubernetes manifests
-│   ├── namespaces/                    # Namespace definitions
+├── k8s/                                # Kubernetes manifests
+│   ├── namespaces/                     # Namespace definitions
 │   │   ├── development.yaml
 │   │   ├── staging.yaml
 │   │   └── production.yaml
-│   └── sample-app/                    # Sample app (Kustomize)
-│       ├── base/                      # Common config
+│   └── sample-app/                     # Sample app (Kustomize)
+│       ├── base/                       # Common config
 │       │   ├── deployment.yaml
 │       │   ├── service.yaml
 │       │   ├── configmap.yaml
 │       │   └── kustomization.yaml
-│       └── overlays/                  # Per-environment overrides
-│           ├── dev/                   # replicas:1, nginx:1.20
-│           ├── staging/               # replicas:2, nginx:1.22
-│           └── prod/                  # replicas:3, nginx:1.25
+│       └── overlays/                   # Per-environment overrides
+│           ├── dev/                    # replicas:1, nginx:1.20
+│           ├── staging/                # replicas:2, nginx:1.22
+│           └── prod/                   # replicas:3, nginx:1.25
 │
-├── samples/                           # Live synced K8s configs
+├── samples/                            # Live synced K8s configs
 │   └── kubernetes/
-│       ├── dev/                       # Synced from development ns
-│       ├── staging/                   # Synced from staging ns
-│       └── prod/                      # Synced from production ns
+│       ├── dev/                        # Synced from development ns
+│       ├── staging/                    # Synced from staging ns
+│       └── prod/                       # Synced from production ns
 │
 ├── scripts/
-│   ├── sync-from-minikube.sh          # Sync live K8s configs
-│   ├── watch-and-sync.sh              # Auto-watch for changes
+│   ├── sync-from-minikube.sh           # Sync live K8s configs
+│   ├── watch-and-sync.sh               # Auto-watch for changes
 │   └── k8s-watcher.py                 # Python K8s watcher
 │
 ├── backend/tests/
-│   ├── test_jaccard.py                # 17 Jaccard tests
-│   └── test_tokenizer.py              # 17 Tokenizer tests
+│   ├── test_jaccard.py                 # 17 Jaccard tests
+│   └── test_tokenizer.py               # 17 Tokenizer tests
 │
 └── .github/
     └── workflows/
-        └── deploy.yml                 # GitHub Actions CI/CD
-🗺️ Project Journey✅ Phase 1: Core Engine + DashboardBuilt the core drift detection engine and REST API:What we built:
-├── Jaccard similarity engine     (jaccard.py)
-├── Multi-format tokenizer        (tokenizer.py)
+        └── deploy.yml                  # GitHub Actions CI/CD
+```
+
+---
+
+## 🗺️ Project Journey
+
+### ✅ Phase 1: Core Engine + Dashboard
+
+Built the core drift detection engine and REST API:
+
+```text
+What we built:
+├── Jaccard similarity engine (jaccard.py)
+├── Multi-format tokenizer (tokenizer.py)
 │   ├── YAML tokenization
 │   ├── JSON tokenization
 │   └── ENV file tokenization
-├── Kubernetes drift detector     (kubernetes.py)
-├── FastAPI REST API               (routes.py)
+├── Kubernetes drift detector (kubernetes.py)
+├── FastAPI REST API (routes.py)
 ├── Next.js dark dashboard
 │   ├── Environment selector
 │   ├── KPI cards (Similarity/Drift/Tokens)
@@ -189,10 +226,17 @@ Open: http://localhost:3000 🎉📁 Project Structuredriftlens-control-center/
 └── 34 unit tests passing
 
 Key Result:
-  Compare dev vs prod → See 73% drift instantly!
-✅ Phase 2: DockerizationContainerized the entire application:What we built:
-├── Backend Dockerfile             (Python 3.12-slim)
-├── Frontend Dockerfile            (Node 20-alpine)
+Compare dev vs prod → See 73% drift instantly!
+```
+
+### ✅ Phase 2: Dockerization
+
+Containerized the entire application:
+
+```text
+What we built:
+├── Backend Dockerfile (Python 3.12-slim)
+├── Frontend Dockerfile (Node 20-alpine)
 │   └── Multi-stage build for small image
 ├── docker-compose.yml
 │   ├── Health checks
@@ -204,9 +248,16 @@ Key Result:
     └── yourusername/driftlens-frontend:latest
 
 Key Result:
-  docker-compose up -d → Everything runs!
-  Works on any machine!
-✅ Phase 3: Kubernetes + GitOpsReal Kubernetes integration with automated drift detection:What we built:
+docker-compose up -d → Everything runs!
+Works on any machine!
+```
+
+### ✅ Phase 3: Kubernetes + GitOps
+
+Real Kubernetes integration with automated drift detection:
+
+```text
+What we built:
 ├── Minikube cluster with 3 namespaces
 │   ├── development  (replicas: 1)
 │   ├── staging      (replicas: 2)
@@ -227,9 +278,16 @@ Key Result:
     └── Auto-sync DriftLens
 
 Key Result:
-  git push → Auto-deploy → Auto-sync → Dashboard updates!
-  Zero manual steps!
-🐳 Docker Commands# Start everything
+git push → Auto-deploy → Auto-sync → Dashboard updates!
+Zero manual steps!
+```
+
+---
+
+## 🐳 Docker Commands
+
+```bash
+# Start everything
 docker-compose up -d
 
 # Stop everything
@@ -243,7 +301,14 @@ docker-compose up -d --build
 
 # Check status
 docker-compose ps
-☸️ Kubernetes Commands# Deploy all environments
+```
+
+---
+
+## ☸️ Kubernetes Commands
+
+```bash
+# Deploy all environments
 make k8s-deploy-all
 
 # Deploy specific environment
@@ -259,23 +324,56 @@ make sync-minikube
 
 # Start auto-watcher
 make watch
-🤖 GitOps Workflow1. Edit K8s config:
+```
+
+---
+
+## 🤖 GitOps Workflow
+
+```text
+1. Edit K8s config:
    vim k8s/sample-app/overlays/prod/patch.yaml
 
 2. Commit and push:
-   git add . && git commit -m "Scale prod" && git push
+   git add .
+   git commit -m "Scale prod"
+   git push
 
 3. GitHub Actions triggers automatically:
    ✅ kubectl apply to all namespaces
    ✅ Wait for rollout
    ✅ Sync DriftLens samples
    ✅ Dashboard updates!
-🔌 API ReferenceList EnvironmentsGET /api/environments
+```
+
+---
+
+## 🔌 API Reference
+
+### List Environments
+
+```http
+GET /api/environments
+```
+
+Response:
+
+```json
 {
   "environments": ["dev", "staging", "prod"],
   "count": 3
 }
-Compare EnvironmentsGET /api/kubernetes/compare?env_a=dev&env_b=prod
+```
+
+### Compare Environments
+
+```http
+GET /api/kubernetes/compare?env_a=dev&env_b=prod
+```
+
+Response:
+
+```json
 {
   "environment_a": "dev",
   "environment_b": "prod",
@@ -291,39 +389,92 @@ Compare EnvironmentsGET /api/kubernetes/compare?env_a=dev&env_b=prod
     "common": ["metadata.name=sample-app", "..."]
   }
 }
-Similarity MatrixGET /api/kubernetes/matrix
+```
+
+### Similarity Matrix
+
+```http
+GET /api/kubernetes/matrix
+```
+
+Response:
+
+```json
 {
   "environments": ["dev", "staging", "prod"],
   "matrix": {
-    "dev":     {"dev": 1.0, "staging": 0.72, "prod": 0.54},
-    "staging": {"dev": 0.72, "staging": 1.0,  "prod": 0.61},
-    "prod":    {"dev": 0.54, "staging": 0.61, "prod": 1.0}
+    "dev": {"dev": 1.0, "staging": 0.72, "prod": 0.54},
+    "staging": {"dev": 0.72, "staging": 1.0, "prod": 0.61},
+    "prod": {"dev": 0.54, "staging": 0.61, "prod": 1.0}
   }
 }
-Interactive Docshttp://localhost:8000/docs
-🛠️ Local DevelopmentBackendcd backend
+```
+
+### Interactive Docs
+
+[http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+## 🛠️ Local Development
+
+### Backend
+
+```bash
+cd backend
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-Frontendcd frontend
+```
+
+### Frontend
+
+```bash
+cd frontend
 cp .env.example .env.local
 npm install
 npm run dev
-Run Testscd backend
+```
+
+### Run Tests
+
+```bash
+cd backend
 source venv/bin/activate
 pytest tests/ -v
 
 # Output:
-# test_jaccard.py    17 passed ✅
-# test_tokenizer.py  17 passed ✅
-# Total: 34 passed  ✅
-📊 Intentional Drift Between EnvironmentsConfigDevStagingProdReplicas123Imagenginx:1.20nginx:1.22nginx:1.25LOG_LEVELdebuginfowarnCACHE_ENABLEDfalsetruetrueMAX_CONNECTIONS1050200TIMEOUT3060120VERSION1.0.01.1.01.0.5🧪 Testsbackend/tests/
+# test_jaccard.py   17 passed ✅
+# test_tokenizer.py 17 passed ✅
+# Total: 34 passed ✅
+```
+
+---
+
+## 📊 Intentional Drift Between Environments
+
+| **Config** | **Dev** | **Staging** | **Prod** |
+|---|---:|---:|---:|
+| Replicas | 1 | 2 | 3 |
+| Image | nginx:1.20 | nginx:1.22 | nginx:1.25 |
+| LOG_LEVEL | debug | info | warn |
+| CACHE_ENABLED | false | true | true |
+| MAX_CONNECTIONS | 10 | 50 | 200 |
+| TIMEOUT | 30 | 60 | 120 |
+| VERSION | 1.0.0 | 1.1.0 | 1.0.5 |
+
+---
+
+## 🧪 Tests
+
+```text
+backend/tests/
 ├── test_jaccard.py     # 17 tests
 │   ├── identical sets → 1.0
-│   ├── disjoint sets  → 0.0
+│   ├── disjoint sets → 0.0
 │   ├── partial overlap → correct ratio
-│   ├── empty sets     → 1.0
+│   ├── empty sets → 1.0
 │   └── edge cases...
 └── test_tokenizer.py   # 17 tests
     ├── YAML tokenization
@@ -332,22 +483,38 @@ pytest tests/ -v
     └── edge cases...
 
 Total: 34 tests, all passing ✅
-🗺️ Roadmap
- Phase 1: Core Engine + REST API + Dashboard
- Phase 2: Docker deployment
- Phase 3: Kubernetes + GitOps
- Phase 4: File Upload (drag & drop YAMLs)
- Phase 5: Git repository integration
- Phase 6: AWS ECS deployment
- Phase 7: kubectl live cluster connection
- Phase 8: Slack/email drift alerts
- Phase 9: Historical drift tracking
- Phase 10: Terraform drift detection
+```
 
+---
+
+## 🗺️ Roadmap
+
+- Phase 1: Core Engine + REST API + Dashboard
+- Phase 2: Docker deployment
+- Phase 3: Kubernetes + GitOps
+- Phase 4: File Upload (drag & drop YAMLs)
+- Phase 5: Git repository integration
+- Phase 6: AWS ECS deployment
+- Phase 7: kubectl live cluster connection
+- Phase 8: Slack/email drift alerts
+- Phase 9: Historical drift tracking
+- Phase 10: Terraform drift detection
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push branch (`git push origin feature/amazing`)
+5. Open Pull Request
+
+---
 
 ## 👨‍💻 Built With
 
-| Technology | Purpose |
+| **Technology** | **Purpose** |
 |---|---|
 | Python 3.12 | Backend language |
 | FastAPI | REST API framework |
