@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: driftlens
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: backend
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          env:
+            - name: ALLOWED_ORIGINS
+              value: "*"
+            - name: LOG_LEVEL
+              value: "warn"
+            - name: ENV_NAME
+              value: "production"
+            - name: CACHE_TTL
+              value: "3600"
+            - name: CACHE_ENABLED
+              value: "true"

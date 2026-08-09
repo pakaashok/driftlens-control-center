@@ -1,9 +1,7 @@
 services:
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: adeeashok/driftlens-backend:latest
     container_name: driftlens-backend
     ports:
       - "8000:8000"
@@ -26,9 +24,7 @@ services:
       - driftlens-network
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: adeeashok/driftlens-frontend:latest
     container_name: driftlens-frontend
     ports:
       - "3000:3000"

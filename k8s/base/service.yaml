@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: driftlens-backend
+  labels:
+    app: driftlens
+spec:
+  selector:
+    app: driftlens
+  ports:
+    - name: backend
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: driftlens-frontend
+  labels:
+    app: driftlens
+spec:
+  selector:
+    app: driftlens
+  ports:
+    - name: frontend
+      port: 3000
+      targetPort: 3000
+  type: NodePort
