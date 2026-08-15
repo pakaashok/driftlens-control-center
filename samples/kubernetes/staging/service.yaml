@@ -4,19 +4,19 @@ metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
       {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"sample-app","environment":"staging","managed-by":"driftlens"},"name":"sample-app","namespace":"staging"},"spec":{"ports":[{"name":"http","port":80,"targetPort":80}],"selector":{"app":"sample-app","environment":"staging"},"type":"ClusterIP"}}
-  creationTimestamp: "2026-08-09T18:37:18Z"
+  creationTimestamp: "2026-08-15T06:36:08Z"
   labels:
     app: sample-app
     environment: staging
     managed-by: driftlens
   name: sample-app
   namespace: staging
-  resourceVersion: "4394"
-  uid: 54c5c001-deff-4837-b4e8-bdb2f7f8f44e
+  resourceVersion: "738"
+  uid: 5450c90e-958f-418b-8806-88f74e526f39
 spec:
-  clusterIP: 10.99.218.164
+  clusterIP: 10.98.15.116
   clusterIPs:
-  - 10.99.218.164
+  - 10.98.15.116
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4

@@ -2,11 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    deployment.kubernetes.io/revision: "2"
+    deployment.kubernetes.io/revision: "1"
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"sample-app","environment":"prod","managed-by":"driftlens","tier":"critical"},"name":"sample-app","namespace":"production"},"spec":{"replicas":8,"selector":{"matchLabels":{"app":"sample-app","environment":"prod","tier":"critical"}},"template":{"metadata":{"labels":{"app":"sample-app","environment":"prod","tier":"critical"}},"spec":{"containers":[{"envFrom":[{"configMapRef":{"name":"sample-app-config"}}],"image":"nginx:1.25","livenessProbe":{"httpGet":{"path":"/","port":80},"initialDelaySeconds":10,"periodSeconds":30},"name":"app","ports":[{"containerPort":80}],"readinessProbe":{"httpGet":{"path":"/","port":80},"initialDelaySeconds":5,"periodSeconds":10},"resources":{"limits":{"cpu":"100m","memory":"128Mi"},"requests":{"cpu":"50m","memory":"64Mi"}}}]}}}}
-  creationTimestamp: "2026-08-09T18:37:23Z"
-  generation: 4
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"sample-app","environment":"prod","managed-by":"driftlens","tier":"critical"},"name":"sample-app","namespace":"production"},"spec":{"replicas":7,"selector":{"matchLabels":{"app":"sample-app","environment":"prod","tier":"critical"}},"template":{"metadata":{"labels":{"app":"sample-app","environment":"prod","tier":"critical"}},"spec":{"containers":[{"envFrom":[{"configMapRef":{"name":"sample-app-config"}}],"image":"nginx:1.25","livenessProbe":{"httpGet":{"path":"/","port":80},"initialDelaySeconds":10,"periodSeconds":30},"name":"app","ports":[{"containerPort":80}],"readinessProbe":{"httpGet":{"path":"/","port":80},"initialDelaySeconds":5,"periodSeconds":10},"resources":{"limits":{"cpu":"100m","memory":"128Mi"},"requests":{"cpu":"50m","memory":"64Mi"}}}]}}}}
+  creationTimestamp: "2026-08-15T06:36:15Z"
+  generation: 1
   labels:
     app: sample-app
     environment: prod
@@ -14,11 +14,11 @@ metadata:
     tier: critical
   name: sample-app
   namespace: production
-  resourceVersion: "7224"
-  uid: 39cbdac7-4173-48a8-bee2-718a415eabe0
+  resourceVersion: "803"
+  uid: 6bd28c08-1f83-43a2-8211-4574b132c323
 spec:
   progressDeadlineSeconds: 600
-  replicas: 8
+  replicas: 7
   revisionHistoryLimit: 10
   selector:
     matchLabels:
@@ -82,22 +82,21 @@ spec:
       securityContext: {}
       terminationGracePeriodSeconds: 30
 status:
-  availableReplicas: 8
   conditions:
-  - lastTransitionTime: "2026-08-09T18:37:23Z"
-    lastUpdateTime: "2026-08-09T18:57:21Z"
-    message: ReplicaSet "sample-app-58d78bff" has successfully progressed.
-    reason: NewReplicaSetAvailable
+  - lastTransitionTime: "2026-08-15T06:36:16Z"
+    lastUpdateTime: "2026-08-15T06:36:16Z"
+    message: Deployment does not have minimum availability.
+    reason: MinimumReplicasUnavailable
+    status: "False"
+    type: Available
+  - lastTransitionTime: "2026-08-15T06:36:16Z"
+    lastUpdateTime: "2026-08-15T06:36:17Z"
+    message: ReplicaSet "sample-app-58d78bff" is progressing.
+    reason: ReplicaSetUpdated
     status: "True"
     type: Progressing
-  - lastTransitionTime: "2026-08-09T19:26:41Z"
-    lastUpdateTime: "2026-08-09T19:26:41Z"
-    message: Deployment has minimum availability.
-    reason: MinimumReplicasAvailable
-    status: "True"
-    type: Available
-  observedGeneration: 4
-  readyReplicas: 8
-  replicas: 8
+  observedGeneration: 1
+  replicas: 7
   terminatingReplicas: 0
-  updatedReplicas: 8
+  unavailableReplicas: 7
+  updatedReplicas: 7

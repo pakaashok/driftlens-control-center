@@ -5,7 +5,7 @@ metadata:
     deployment.kubernetes.io/revision: "1"
     kubectl.kubernetes.io/last-applied-configuration: |
       {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"sample-app","environment":"staging","managed-by":"driftlens"},"name":"sample-app","namespace":"staging"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"sample-app","environment":"staging"}},"template":{"metadata":{"labels":{"app":"sample-app","environment":"staging"}},"spec":{"containers":[{"envFrom":[{"configMapRef":{"name":"sample-app-config"}}],"image":"nginx:1.22","livenessProbe":{"httpGet":{"path":"/","port":80},"initialDelaySeconds":10,"periodSeconds":30},"name":"app","ports":[{"containerPort":80}],"readinessProbe":{"httpGet":{"path":"/","port":80},"initialDelaySeconds":5,"periodSeconds":10},"resources":{"limits":{"cpu":"100m","memory":"128Mi"},"requests":{"cpu":"50m","memory":"64Mi"}}}]}}}}
-  creationTimestamp: "2026-08-09T18:37:18Z"
+  creationTimestamp: "2026-08-15T06:36:08Z"
   generation: 1
   labels:
     app: sample-app
@@ -13,8 +13,8 @@ metadata:
     managed-by: driftlens
   name: sample-app
   namespace: staging
-  resourceVersion: "4485"
-  uid: da9d54d0-7f2e-497e-927b-1acd76923bec
+  resourceVersion: "756"
+  uid: 66efda9b-15d0-47dd-968a-1daba9501762
 spec:
   progressDeadlineSeconds: 600
   replicas: 2
@@ -79,22 +79,21 @@ spec:
       securityContext: {}
       terminationGracePeriodSeconds: 30
 status:
-  availableReplicas: 2
   conditions:
-  - lastTransitionTime: "2026-08-09T18:37:28Z"
-    lastUpdateTime: "2026-08-09T18:37:28Z"
-    message: Deployment has minimum availability.
-    reason: MinimumReplicasAvailable
-    status: "True"
+  - lastTransitionTime: "2026-08-15T06:36:09Z"
+    lastUpdateTime: "2026-08-15T06:36:09Z"
+    message: Deployment does not have minimum availability.
+    reason: MinimumReplicasUnavailable
+    status: "False"
     type: Available
-  - lastTransitionTime: "2026-08-09T18:37:18Z"
-    lastUpdateTime: "2026-08-09T18:37:28Z"
-    message: ReplicaSet "sample-app-6cc88446b5" has successfully progressed.
-    reason: NewReplicaSetAvailable
+  - lastTransitionTime: "2026-08-15T06:36:08Z"
+    lastUpdateTime: "2026-08-15T06:36:09Z"
+    message: ReplicaSet "sample-app-6cc88446b5" is progressing.
+    reason: ReplicaSetUpdated
     status: "True"
     type: Progressing
   observedGeneration: 1
-  readyReplicas: 2
   replicas: 2
   terminatingReplicas: 0
+  unavailableReplicas: 2
   updatedReplicas: 2
