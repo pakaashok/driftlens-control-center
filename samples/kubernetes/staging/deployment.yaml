@@ -13,7 +13,7 @@ metadata:
     managed-by: driftlens
   name: sample-app
   namespace: staging
-  resourceVersion: "756"
+  resourceVersion: "966"
   uid: 66efda9b-15d0-47dd-968a-1daba9501762
 spec:
   progressDeadlineSeconds: 600
@@ -79,21 +79,22 @@ spec:
       securityContext: {}
       terminationGracePeriodSeconds: 30
 status:
+  availableReplicas: 2
   conditions:
-  - lastTransitionTime: "2026-08-15T06:36:09Z"
-    lastUpdateTime: "2026-08-15T06:36:09Z"
-    message: Deployment does not have minimum availability.
-    reason: MinimumReplicasUnavailable
-    status: "False"
+  - lastTransitionTime: "2026-08-15T06:38:41Z"
+    lastUpdateTime: "2026-08-15T06:38:41Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
     type: Available
   - lastTransitionTime: "2026-08-15T06:36:08Z"
-    lastUpdateTime: "2026-08-15T06:36:09Z"
-    message: ReplicaSet "sample-app-6cc88446b5" is progressing.
-    reason: ReplicaSetUpdated
+    lastUpdateTime: "2026-08-15T06:38:41Z"
+    message: ReplicaSet "sample-app-6cc88446b5" has successfully progressed.
+    reason: NewReplicaSetAvailable
     status: "True"
     type: Progressing
   observedGeneration: 1
+  readyReplicas: 2
   replicas: 2
   terminatingReplicas: 0
-  unavailableReplicas: 2
   updatedReplicas: 2
